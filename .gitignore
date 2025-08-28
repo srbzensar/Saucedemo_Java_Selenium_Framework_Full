@@ -1,0 +1,15 @@
+# Ignore generated files and folders for Java Selenium TestNG automation framework
+/logs/
+/screenshots/
+/reports/
+target/
+
+# Ignore IDE-specific files (IntelliJ IDEA)
+.idea/
+*.iml
+
+# Ignore IDE-specific files (Eclipse)
+.project
+.classpath
+.settings/
+.loadpath
