@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clean') {
+            steps {
+                echo 'Cleaning workspace...'
+                bat 'mvn clean'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                bat 'mvn test'
+            }
+        }
+
+        stage('Report') {
+            steps {
+                echo 'Publishing Extent Report...'
+                publishHTML(target: [
+                    reportDir: 'reports',
+                    reportFiles: 'ExtentReport.html',
+                    reportName: 'Extent Report',
+                    keepAll: true
+                ])
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Archiving screenshots...'
+            archiveArtifacts artifacts: '**/screenshots/*.png', allowEmptyArchive: true
+        }
+    }
+}
