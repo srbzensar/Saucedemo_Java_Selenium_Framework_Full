@@ -5,14 +5,14 @@ pipeline {
         stage('Clean') {
             steps {
                 echo 'Cleaning workspace...'
-                bat 'mvn clean'
+                bat 'mvn clean -Dmaven.compiler.compilerArgs="--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED"'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                bat 'mvn test'
+                bat 'mvn test -Dmaven.compiler.compilerArgs="--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED"'
             }
         }
 
