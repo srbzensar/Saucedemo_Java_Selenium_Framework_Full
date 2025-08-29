@@ -3,14 +3,13 @@ pipeline {
  
     tools {
         maven 'Maven_Jenkins'   // The Maven name from Jenkins config
-        jdk 'JDK_Jenkins'      			 // The JDK name from Jenkins config
+        jdk 'JDK_Jenkins'      	// The JDK name from Jenkins config
     }
  
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/srbzensar/Saucedemo_Java_Selenium_Framework_Full
-.git'
+                git branch: 'master', url: 'https://github.com/srbzensar/Saucedemo_Java_Selenium_Framework_Full.git'
             }
         }
  
