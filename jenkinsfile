@@ -19,7 +19,7 @@ pipeline {
             		bat '''
                         if exist reports rmdir /s /q reports
                         mkdir reports
-                        mvn clean test -Dexecution=%EXECUTION% -DsuiteXmlFiles=testng.xml
+                        mvn clean test -DsuiteXmlFiles=testng.xml
                     '''
             	}
             }
