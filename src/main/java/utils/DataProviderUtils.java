@@ -13,7 +13,7 @@ public class DataProviderUtils {
     @DataProvider(name = "csvData")
     public static Iterator<Object[]> csvDataProvider() throws Exception {
         List<Object[]> testData = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader("resources/testdata.csv"))) {
+        try (CSVReader reader = new CSVReader(new FileReader("src/main/resources/testdata.csv"))) {
             String[] line;
             reader.readNext(); // skip header
             while ((line = reader.readNext()) != null) {

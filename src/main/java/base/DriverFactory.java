@@ -14,7 +14,7 @@ public class DriverFactory {
     public static WebDriver initDriver() {
         Properties prop = new Properties();
         try {
-            prop.load(new FileInputStream("resources/config.properties"));
+            prop.load(new FileInputStream("src/main/resources/config.properties"));
         } catch (Exception e) {
             e.printStackTrace();
         }
