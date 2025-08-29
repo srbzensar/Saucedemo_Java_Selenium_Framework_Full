@@ -1,84 +1,38 @@
 pipeline {
     agent any
- 
-    tools {
-        maven 'Maven_Jenkins'   // The Maven name from Jenkins config
-        jdk 'JDK_Jenkins'      	// The JDK name from Jenkins config
-    }
- 
+
     stages {
-        stage('Checkout') {
+        stage('Clean') {
             steps {
-                git branch: 'master', url: 'https://github.com/srbzensar/Saucedemo_Java_Selenium_Framework_Full.git'
+                echo 'Cleaning workspace...'
+                bat 'mvn clean -Dmaven.compiler.compilerArgs="--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED"'
             }
         }
- 
-        stage('Build & Test') {
-        	steps {
-            	catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-            		bat '''
-                        if exist reports rmdir /s /q reports
-                        mkdir reports
-                        mvn clean test -DsuiteXmlFiles=testng.xml
-                    '''
-            	}
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                bat 'mvn test -Dmaven.compiler.compilerArgs="--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED"'
             }
         }
- 
-        stage('Publish TestNG Report') {
+
+        stage('Report') {
             steps {
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'test-output',
-                    reportFiles: 'index.html',
-                    reportName: 'TestNG Report'
+                echo 'Publishing Extent Report...'
+                publishHTML(target: [
+                    reportDir: 'reports',
+                    reportFiles: 'ExtentReport.html',
+                    reportName: 'Extent Report',
+                    keepAll: true
                 ])
             }
         }
-        
-        stage('Publish Extent Report') {
-            steps {
-            	script {
-                    // Find the latest ExtentReport on Windows
-            		def latestReport = bat(
-                		script: '''
-                			@echo off
-                			for /f "delims=" %%i in (\'dir /b /a-d /o-d reports\\ExtentReport_*.html\') do (
-                		 		echo %%i
-                		 		goto :done
-                		 	)
-                		 	:done
-                		''',
-                		returnStdout: true
-            		).trim()
- 
-            		echo "Latest ExtentReport File: ${latestReport}"
-                    env.LATEST_REPORT = latestReport
-                    
-                	publishHTML([
-                    	allowMissing: false,
-                    	alwaysLinkToLastBuild: true,
-                    	keepAll: true,
-                    	reportDir: 'reports',
-                    	reportFiles: latestReport,
-                    	reportName: 'Extent Report'
-                	])
-            	}
-        	}
-    	}
     }
- 
+
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'
-            
-            // Zip only the current build’s ExtentReport (correct path usage)
-            bat "powershell Compress-Archive -Path reports\\${env.LATEST_REPORT} -DestinationPath reports\\ExtentReport.zip -Force"
-            
-            // Archive just the zip file
-            archiveArtifacts artifacts: 'reports/ExtentReport.zip', fingerprint: true
-        }  
+            echo 'Archiving screenshots...'
+            archiveArtifacts artifacts: '**/screenshots/*.png', allowEmptyArchive: true
+        }
     }
 }
